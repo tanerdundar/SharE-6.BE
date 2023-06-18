@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/SharE-6/SharE-6.iml" filepath="$PROJECT_DIR$/SharE-6/SharE-6.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/SharE-6.BE.iml" filepath="$PROJECT_DIR$/.idea/SharE-6.BE.iml" />
-    </modules>
-  </component>
-</project>
