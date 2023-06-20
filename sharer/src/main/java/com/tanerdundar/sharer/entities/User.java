@@ -54,6 +54,11 @@ public class User {
 
     @PrePersist
     public void prePersist() {
+        if(this.userRank==Rank.ADMIN){
+            this.userRank=Rank.ADMIN;
+        }else {
+            this.userRank=Rank.STANDARD;
+        }
         if(this.userStatus==Status.INACTIVE) {
         }else {
             this.userStatus = Status.ACTIVE;
@@ -67,7 +72,7 @@ public class User {
         String color="#";
         String[] colors ={"#00FFFF", "#808080", "#000080", "#C0C0C0", "#008080", "#808000", "#008000", "#0000FF", "#00FF00", "#800080", "#FF00FF", "#800000", "#FF0000", "#FFFF00"};
 
-        int p =  (int)Math.round((Math.random()*14));
+        int p =  (int)Math.round((Math.random()*14)-0.5);
             color=colors[p];
         return color;
     }
