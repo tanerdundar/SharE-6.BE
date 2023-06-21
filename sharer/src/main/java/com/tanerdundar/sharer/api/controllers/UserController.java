@@ -36,7 +36,7 @@ public class UserController {
     }
     @PostMapping("/login")
     public boolean userLogin(@RequestBody UserLoginRequest request) {
-    boolean logged = userService.userLogin(request);
-    return logged;
+        boolean logged=userService.userLogin(request);
+        return logged;
     }
 }
