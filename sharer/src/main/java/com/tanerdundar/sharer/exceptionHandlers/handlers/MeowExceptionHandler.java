@@ -1,7 +1,7 @@
 package com.tanerdundar.sharer.exceptionHandlers.handlers;
 
+import com.tanerdundar.sharer.exceptionHandlers.exceptions.MeowException;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.PasswordException;
-import com.tanerdundar.sharer.exceptionHandlers.exceptions.UserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,7 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class PasswordExceptionHandler extends ResponseEntityExceptionHandler {
+public class MeowExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(value
@@ -20,7 +20,7 @@ public class PasswordExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity("IllegalArgument exception", HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @ExceptionHandler(value= {PasswordException.class, PasswordException.class })
+    @ExceptionHandler(value= {MeowException.class, MeowException.class })
     protected ResponseEntity handleNotFoundConflict(
             RuntimeException ex, WebRequest request) {
 
