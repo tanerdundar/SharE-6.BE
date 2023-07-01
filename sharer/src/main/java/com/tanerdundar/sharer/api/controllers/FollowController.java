@@ -2,6 +2,7 @@ package com.tanerdundar.sharer.api.controllers;
 
 import com.tanerdundar.sharer.entities.Follow;
 import com.tanerdundar.sharer.requests.follow.FollowCreateRequest;
+import com.tanerdundar.sharer.requests.follow.FollowCheckRequest;
 import com.tanerdundar.sharer.requests.meow.MeowCreateRequest;
 import com.tanerdundar.sharer.service.abstracts.FollowService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,14 @@ public class FollowController {
     }
     @GetMapping("/{userId}")
     public ResponseEntity getFollowsByUserId( @PathVariable long userId){
-        List<Follow> follows = followService.getFollowsByUerId(userId);
+        List<Follow> follows = followService.getFollowsByUserId(userId);
         return ResponseEntity.ok(follows);
+    }
+    @GetMapping("/checkFollow/{userId}/{searchedUserId}")
+    public boolean checkFollow(@PathVariable long userId,@PathVariable long searchedUserId){
+        System.out.println("asd");
+        boolean isFollowing = followService.checkFollow(userId,searchedUserId);
+                return isFollowing;
     }
 
 

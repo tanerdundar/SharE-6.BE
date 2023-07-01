@@ -54,7 +54,6 @@ public class MeowManager implements MeowService {
         List<Follow> followings = followRepository.findFollowsByFollower_UserId(userId);
         List<Meow> meows= new ArrayList<>();
         for (Follow following : followings) {
-
             Optional<User> user = userRepository.findById(following.getFollowing().getUserId());
             List<Meow> userMeows = meowRepository.findMeowsByOwner_UserId(user.get().getUserId());
             for (Meow userMeow : userMeows) {
@@ -64,7 +63,6 @@ public class MeowManager implements MeowService {
         Comparator<Meow> idComparator = Comparator.comparingLong(Meow::getMeow_id);
         Comparator<Meow> reverseIdComparator = Collections.reverseOrder(idComparator);
         Collections.sort(meows, reverseIdComparator);
-
         return meows;
     }
 }

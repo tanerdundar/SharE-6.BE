@@ -3,6 +3,8 @@ package com.tanerdundar.sharer.service.concrete;
 import com.tanerdundar.sharer.dao.FollowRepository;
 import com.tanerdundar.sharer.dao.MeowRepository;
 import com.tanerdundar.sharer.dao.UserRepository;
+import com.tanerdundar.sharer.dto.PseudoUser;
+import com.tanerdundar.sharer.entities.Follow;
 import com.tanerdundar.sharer.entities.User;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.PasswordException;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.UserException;
@@ -12,7 +14,6 @@ import com.tanerdundar.sharer.requests.user.UserLoginRequest;
 import com.tanerdundar.sharer.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import util.PseudoUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,8 +45,8 @@ public class UserManager implements UserService {
                 throw new UserException("Existing username!...");
             }
         }
-        for (int i=0;i<users.size();i++){
-            if(request.getEmail().equals(users.get(i).getEmail())){
+        for (int i=0;i<users.size();i++) {
+            if (request.getEmail().equals(users.get(i).getEmail())) {
                 throw new EmailException("Existing email address!...");
             }
         }
@@ -81,25 +82,45 @@ public long userLogin(UserLoginRequest request) {
 
 }
     @Override
-    public PseudoUser getOnePseudoUserByUserId(long userId,PseudoUser pNewUser) {
+    public PseudoUser getOnePseudoUserByUserId(long userId, PseudoUser pNewUser) {
         Optional<User> user =userRepository.findById(userId);
-        return pNewUser.newPseudo(user);
+        return pNewUser.newPseudo(user,true);
     }
 
     @Override
-    public PseudoUser getOnePseudoUserByUsername(String username, PseudoUser pUser) {
-        Optional<User> user =userRepository.findByUsername(username);
-        return pUser.newPseudo(user);
-    }
-
-    @Override
-    public boolean checkUserByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
+    public PseudoUser getOnePseudoUserByUsername(String username, long followerId) {
+        Optional<User> user= userRepository.findByUsername(username);
         if(user.isPresent()){
-            return true;
-        } else
+        boolean follow = followRepository.existsFollowByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId());
+
+        PseudoUser pseudo = new PseudoUser(user,follow);
+        return pseudo;
+    } else{
             throw new UserException();
-    }
+
+        }
+   }
+
+
+//    @Override
+//    public PseudoUser getOnePseudoUserByUsername(String username, PseudoUser pUser) {
+//        Optional<User> user =userRepository.findByUsername(username);
+//        return pUser.newPseudo(user);
+//    }
+
+//    @Override
+//    public PseudoUser checkUserByUsername(String username,long followerId) {
+//        Optional<User> user = userRepository.findByUsername(username);
+//        PseudoUser pUser = new PseudoUser();
+//        if(user.isPresent()){
+//             boolean follow = followRepository.existsFollowByFollower_UserIdAndFollowing_UserId(user.get().getUserId(),followerId);
+//            System.out.println(user.get().getUserId());
+//            System.out.println(followerId);
+//             return pUser.newPseudo(user,follow);
+//
+//        } else
+//            throw new UserException();
+//    }
 
 }
 

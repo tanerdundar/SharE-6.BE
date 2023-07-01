@@ -1,6 +1,7 @@
 package com.tanerdundar.sharer.api.controllers;
 
 
+import com.tanerdundar.sharer.dto.PseudoUser;
 import com.tanerdundar.sharer.entities.User;
 import com.tanerdundar.sharer.requests.user.UserCreateRequest;
 import com.tanerdundar.sharer.requests.user.UserLoginRequest;
@@ -8,7 +9,6 @@ import com.tanerdundar.sharer.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import util.PseudoUser;
 
 import java.util.List;
 
@@ -45,15 +45,28 @@ public class UserController {
         PseudoUser user = userService.getOnePseudoUserByUserId(userId,pUser);
         return ResponseEntity.ok(user);
     }
-    @GetMapping("/search/{username}")
-    public ResponseEntity getOnePseudoUserByUsername(@PathVariable String username, PseudoUser pUser) {
-        PseudoUser user = userService.getOnePseudoUserByUsername(username,pUser);
-        return ResponseEntity.ok(user);
+//    @GetMapping("/search/{username}")
+//    public ResponseEntity getOnePseudoUserByUsername(@PathVariable String username, PseudoUser pUser) {
+//        PseudoUser user = userService.getOnePseudoUserByUsername(username,pUser);
+//        return ResponseEntity.ok(user);
+//    }
+
+
+
+//    @GetMapping("/check/{username}/{followerId}")
+//    public ResponseEntity checkUserByUsername(@PathVariable String username,long followerId) {
+//        PseudoUser isThereThisUser = userService.checkUserByUsername(username,followerId);
+//        return ResponseEntity.ok(isThereThisUser);
+//    }
+
+
+    @GetMapping("/check/{username}/{followerId}")
+    public ResponseEntity checkUserByUsername(@PathVariable String username,@PathVariable long followerId){
+        PseudoUser pseudo = userService.getOnePseudoUserByUsername(username,followerId);
+        return ResponseEntity.ok(pseudo);
     }
-    @GetMapping("/check/{username}")
-    public ResponseEntity checkUserByUsername(@PathVariable String username) {
-        boolean isThereThisUser = userService.checkUserByUsername(username);
-        return ResponseEntity.ok(isThereThisUser);
-    }
+
+
+
 
 }
