@@ -25,7 +25,6 @@ public class FollowManager implements FollowService {
 
     @Override
     public void createNewFollow(FollowCreateRequest request,long userId) {
-       // boolean followCheck = followRepository.existsFollowByFollower_UserIdAndFollowing_UserId(userId, request.getFollowingId());
         if(!followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).isPresent()){
             System.out.println(userId+" "+ request.getFollowingId()+"'i takip etmiyor" );
             Follow newFollow= new Follow();
@@ -35,17 +34,15 @@ public class FollowManager implements FollowService {
         }else if(followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).
                 get().getFollowStatus()==Status.INACTIVE){
             System.out.println("ortaya girdi ");
-            followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).
-                    get().setFollowStatus(Status.ACTIVE);
+            Follow toUpdate = followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).get();
+            toUpdate.setFollowStatus(Status.ACTIVE);
+            followRepository.save(toUpdate);
         }else {
             System.out.println("asagi girdi ");
 
-            followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).
-                    get().setFollowStatus(Status.INACTIVE);
-            System.out.println( followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).
-                    get().getFollowId());
-            System.out.println( followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).
-                    get().getFollowing().getUserId());
+            Follow toUpdate = followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).get();
+            toUpdate.setFollowStatus(Status.INACTIVE);
+            followRepository.save(toUpdate);
         }
 
     }

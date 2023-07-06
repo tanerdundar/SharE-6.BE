@@ -26,13 +26,14 @@ public class Follow {
     @Column (name="follow_status")
     private Status followStatus;
 
-//    @PrePersist
-//    public void prePersist() {
-//
-//        if(this.followStatus==null) {
-//            this.followStatus = Status.ACTIVE;
-//        }else{
-//            this.followStatus=((this.followStatus==Status.ACTIVE)?Status.INACTIVE:Status.ACTIVE);
-//        }
-//    }
+    @PrePersist
+    public void prePersist() {
+
+        if(this.followStatus==null) {
+            this.followStatus = Status.ACTIVE;
+        }else{
+            this.followStatus=((this.followStatus==Status.ACTIVE)?Status.INACTIVE:Status.ACTIVE);
+        }
+    }
+
 }

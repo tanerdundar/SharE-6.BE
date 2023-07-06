@@ -5,6 +5,7 @@ import com.tanerdundar.sharer.dao.MeowRepository;
 import com.tanerdundar.sharer.dao.UserRepository;
 import com.tanerdundar.sharer.dto.PseudoUser;
 import com.tanerdundar.sharer.entities.Follow;
+import com.tanerdundar.sharer.entities.Status;
 import com.tanerdundar.sharer.entities.User;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.PasswordException;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.UserException;
@@ -84,16 +85,33 @@ public long userLogin(UserLoginRequest request) {
     @Override
     public PseudoUser getOnePseudoUserByUserId(long userId, PseudoUser pNewUser) {
         Optional<User> user =userRepository.findById(userId);
-        return pNewUser.newPseudo(user,true);
+        long followers= followRepository.findFollowsByFollowing_UserId(userId).size();
+        long followings= followRepository.findFollowsByFollower_UserId(userId).size();
+        long meows= meowRepository.findMeowsByOwner_UserId(userId).size();
+        PseudoUser pseudo= pNewUser.newPseudo(user,true);
+        pseudo.setNumberOfMeows(meows);
+        pseudo.setNumberOfFollowers(followers);
+        pseudo.setNumberOfFollowings(followings);
+        return pseudo;
     }
 
     @Override
     public PseudoUser getOnePseudoUserByUsername(String username, long followerId) {
         Optional<User> user= userRepository.findByUsername(username);
+
         if(user.isPresent()){
         boolean follow = followRepository.existsFollowByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId());
+        if(followRepository.findFollowsByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId()).isPresent()){
+            if(followRepository.findFollowsByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId()).get().getFollowStatus()== Status.INACTIVE){
+                follow=!follow;
+            }
+        }
 
         PseudoUser pseudo = new PseudoUser(user,follow);
+        pseudo.setNumberOfFollowers(followRepository.findFollowsByFollowing_UserId(pseudo.getUserId()).size());
+        pseudo.setNumberOfFollowings(followRepository.findFollowsByFollower_UserId(pseudo.getUserId()).size());
+        pseudo.setNumberOfMeows(meowRepository.findMeowsByOwner_UserId(pseudo.getUserId()).size());
+
         return pseudo;
     } else{
             throw new UserException();

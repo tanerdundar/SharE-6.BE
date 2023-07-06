@@ -1,5 +1,6 @@
 package com.tanerdundar.sharer.service.abstracts;
 
+import com.tanerdundar.sharer.dto.PseudoMeow;
 import com.tanerdundar.sharer.entities.Meow;
 import com.tanerdundar.sharer.requests.meow.MeowCreateRequest;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,8 @@ public interface MeowService {
 
     List<Meow> getOneUsersMeowsByUserId(long userId);
 
-    List<Meow> getHomeMeowsByUserId(long userId);
+    List<PseudoMeow> getHomeMeowsByUserId(long userId);
+
+//    Meow getOneMeowByUserId(long userId);
 
 }

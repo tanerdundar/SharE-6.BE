@@ -22,6 +22,13 @@ public class Like {
     @JoinColumn(name="meow_id", nullable = false)
     private Meow likedMeow;
 
+    @Enumerated(EnumType.STRING)
+    @Column (name="like_status")
+    private Status likeStatus;
 
+    @PrePersist
+    public void prePersist() {
+        this.likeStatus=((this.likeStatus==Status.ACTIVE)?Status.INACTIVE:Status.ACTIVE);
+    }
 
 }

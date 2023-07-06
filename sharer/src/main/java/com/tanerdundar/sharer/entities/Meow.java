@@ -14,7 +14,7 @@ public class Meow {
     @Id
     @Column(name="meow_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long meow_id;
+    private long meowId;
 
     @Column(name="content")
     private String content;

@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Data
 @NoArgsConstructor
+
 public class PseudoUser {
 
     private long userId;
@@ -22,7 +23,20 @@ public class PseudoUser {
     private Rank userRank;
     private String backgroundColor;
     private boolean follow;
+    private long numberOfMeows;
+    private long numberOfFollowings;
+    private long numberOfFollowers;
 
+
+    public PseudoUser(Optional<User> user){
+        this.userId=user.get().getUserId();
+        this.username=user.get().getUsername();
+        this.name=user.get().getName();
+        this.email=user.get().getEmail();
+        this.userStatus=user.get().getUserStatus();
+        this.userRank=user.get().getUserRank();
+        this.backgroundColor=user.get().getBackgroundColor();
+    }
     public PseudoUser(Optional<User> user,boolean follow){
 
             this.userId=user.get().getUserId();

@@ -3,6 +3,7 @@ package com.tanerdundar.sharer.api.controllers;
 import com.tanerdundar.sharer.entities.Follow;
 import com.tanerdundar.sharer.requests.follow.FollowCreateRequest;
 import com.tanerdundar.sharer.requests.follow.FollowCheckRequest;
+import com.tanerdundar.sharer.requests.follow.FollowUpdateRequest;
 import com.tanerdundar.sharer.requests.meow.MeowCreateRequest;
 import com.tanerdundar.sharer.service.abstracts.FollowService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,11 @@ public class FollowController {
         boolean isFollowing = followService.checkFollow(userId,searchedUserId);
                 return isFollowing;
     }
+
+//    @PutMapping("/follow/unfollow")
+//    public Follow updateOneFollowStatus(@PathVariable Long followId, @RequestBody FollowUpdateRequest updateFollow) {
+//        return followService.updateOneFollowStatusByRequest(followId, updateFollow);
+//    }
 
 
 }

@@ -20,11 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-//    @GetMapping("/{userId}")
-//    public ResponseEntity getOneUserByUserId(@PathVariable long userId) {
-//        User user = userService.getOneUserByUserId(userId);
-//        return ResponseEntity.ok(user);
-//    }
+
     @GetMapping
     public ResponseEntity getAllUsers() {
         List<User> users = userService.getAllUsers();
@@ -45,19 +41,7 @@ public class UserController {
         PseudoUser user = userService.getOnePseudoUserByUserId(userId,pUser);
         return ResponseEntity.ok(user);
     }
-//    @GetMapping("/search/{username}")
-//    public ResponseEntity getOnePseudoUserByUsername(@PathVariable String username, PseudoUser pUser) {
-//        PseudoUser user = userService.getOnePseudoUserByUsername(username,pUser);
-//        return ResponseEntity.ok(user);
-//    }
 
-
-
-//    @GetMapping("/check/{username}/{followerId}")
-//    public ResponseEntity checkUserByUsername(@PathVariable String username,long followerId) {
-//        PseudoUser isThereThisUser = userService.checkUserByUsername(username,followerId);
-//        return ResponseEntity.ok(isThereThisUser);
-//    }
 
 
     @GetMapping("/check/{username}/{followerId}")

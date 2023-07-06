@@ -1,11 +1,12 @@
 package com.tanerdundar.sharer.service.concrete;
 
 import com.tanerdundar.sharer.dao.FollowRepository;
+import com.tanerdundar.sharer.dao.LikeRepository;
 import com.tanerdundar.sharer.dao.MeowRepository;
 import com.tanerdundar.sharer.dao.UserRepository;
-import com.tanerdundar.sharer.entities.Follow;
-import com.tanerdundar.sharer.entities.Meow;
-import com.tanerdundar.sharer.entities.User;
+import com.tanerdundar.sharer.dto.PseudoMeow;
+import com.tanerdundar.sharer.dto.PseudoUser;
+import com.tanerdundar.sharer.entities.*;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.MeowException;
 import com.tanerdundar.sharer.requests.meow.MeowCreateRequest;
 import com.tanerdundar.sharer.service.abstracts.MeowService;
@@ -23,6 +24,7 @@ public class MeowManager implements MeowService {
     private final MeowRepository meowRepository;
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final LikeRepository likeRepository;
 
 
     @Override
@@ -45,23 +47,36 @@ public class MeowManager implements MeowService {
 
     @Override
     public List<Meow> getOneUsersMeowsByUserId(long userId) {
-        Optional<User> meowOwner= userRepository.findById(userId);
         return  meowRepository.findMeowsByOwner_UserId(userId);
     }
 
     @Override
-    public List<Meow> getHomeMeowsByUserId(long userId) {
+    public List<PseudoMeow> getHomeMeowsByUserId(long userId) {
         List<Follow> followings = followRepository.findFollowsByFollower_UserId(userId);
-        List<Meow> meows= new ArrayList<>();
+        List<PseudoMeow> meows= new ArrayList<>();
         for (Follow following : followings) {
             Optional<User> user = userRepository.findById(following.getFollowing().getUserId());
-            List<Meow> userMeows = meowRepository.findMeowsByOwner_UserId(user.get().getUserId());
-            for (Meow userMeow : userMeows) {
-                meows.add(userMeow);
+            if(!(following.getFollowStatus()== Status.INACTIVE)){
+                PseudoUser pUser = new PseudoUser(user,false);
+                List<Meow> userMeows = meowRepository.findMeowsByOwner_UserId(pUser.getUserId());
+                for (Meow userMeow : userMeows) {
+                    boolean like= likeRepository.existsLikeByLikedMeow_MeowIdAndLiker_UserId(userMeow.getMeowId(),userId);
+                    PseudoMeow addingMeow= new PseudoMeow(userMeow,like,pUser);
+                    List<Like> likes=likeRepository.findAllByLikedMeow_MeowId(userMeow.getMeowId());
+                    List<PseudoUser> likedUsers= new ArrayList<>();
+                    for(int i=0;i< likes.size();i++){
+                        Optional<User> liker= userRepository.findById(likes.get(i).getLiker().getUserId());
+                        PseudoUser newPseudoUser= new PseudoUser(liker);
+                        likedUsers.add(newPseudoUser);
+                    }
+                    addingMeow.setLikedUsers(likedUsers);
+                    meows.add(addingMeow);
+                }
             }
+
         }
-        Comparator<Meow> idComparator = Comparator.comparingLong(Meow::getMeow_id);
-        Comparator<Meow> reverseIdComparator = Collections.reverseOrder(idComparator);
+        Comparator<PseudoMeow> idComparator = Comparator.comparingLong(PseudoMeow::getMeowId);
+        Comparator<PseudoMeow> reverseIdComparator = Collections.reverseOrder(idComparator);
         Collections.sort(meows, reverseIdComparator);
         return meows;
     }
