@@ -14,12 +14,15 @@ public class LikeController {
 
     @PostMapping("/{userId}/{meowId}")
     public void createNewLike(@PathVariable long userId, @PathVariable long meowId) {
-        System.out.println(userId);
         likeService.createNewLike(userId,meowId);
     }
     @GetMapping("/{userId}/{meowId}")
     public boolean checkLikeOrNot(@PathVariable long userId, @PathVariable long meowId){
         return likeService. checkLikeOrNot(userId,meowId);
+    }
+    @DeleteMapping("/{userId}/{meowId}")
+    public void deleteLike(@PathVariable long userId, @PathVariable long meowId){
+        likeService.deleteLike(userId,meowId);
     }
 
 }

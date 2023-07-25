@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface LikeService {
-    void createNewLike( long userId,long meowıD);
+    void createNewLike( long userId,long meowId);
 
     boolean checkLikeOrNot(long userId, long meowId);
+    void deleteLike( long userId,long meowId);
+
 }

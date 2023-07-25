@@ -18,7 +18,8 @@ public interface UserService {
     PseudoUser getOnePseudoUserByUserId(long userId, PseudoUser pNewUser);
 
     PseudoUser getOnePseudoUserByUsername(String username, long followerId);
-//    PseudoUser getOnePseudoUserByUsername(String username, PseudoUser pUser);
 
-//    PseudoUser checkUserByUsername(String username,long followerId);
+    List<PseudoUser> getAllFollowersPseudoByUserId(long ownerId,long userId);
+
+    List<PseudoUser> getAllFollowingsPseudoByUserId(long ownerId,long userId);
 }

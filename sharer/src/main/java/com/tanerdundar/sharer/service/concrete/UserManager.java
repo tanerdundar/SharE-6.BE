@@ -5,6 +5,7 @@ import com.tanerdundar.sharer.dao.MeowRepository;
 import com.tanerdundar.sharer.dao.UserRepository;
 import com.tanerdundar.sharer.dto.PseudoUser;
 import com.tanerdundar.sharer.entities.Follow;
+import com.tanerdundar.sharer.entities.Meow;
 import com.tanerdundar.sharer.entities.Status;
 import com.tanerdundar.sharer.entities.User;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.PasswordException;
@@ -16,6 +17,7 @@ import com.tanerdundar.sharer.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,6 +120,40 @@ public long userLogin(UserLoginRequest request) {
 
         }
    }
+
+    @Override
+    public List<PseudoUser> getAllFollowersPseudoByUserId(long ownerId,long userId) {
+        List<Follow> allFollows =followRepository.findFollowsByFollowing_UserId( userId);
+        List<PseudoUser> newList= new ArrayList<>();
+        for(int i=0;i<allFollows.size();i++){
+            PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollows.get(i).getFollower().getUserId()));
+            List<Follow> followings = followRepository.findFollowsByFollower_UserId(newPseudo.getUserId());
+            List<Follow> followers = followRepository.findFollowsByFollowing_UserId(newPseudo.getUserId());
+            List<Meow> meows =meowRepository.findMeowsByOwner_UserId(newPseudo.getUserId());
+            newPseudo.setNumberOfFollowings(followings.size());
+            newPseudo.setNumberOfFollowers(followers.size());
+            newPseudo.setNumberOfMeows(meows.size());
+            newList.add(newPseudo);
+        }
+        return newList;
+    }
+
+    @Override
+    public List<PseudoUser> getAllFollowingsPseudoByUserId(long ownerId,long userId) {
+        List<Follow> allFollows =followRepository.findFollowsByFollower_UserId(userId);
+        List<PseudoUser> newList= new ArrayList<>();
+        for(int i=0;i<allFollows.size();i++){
+            PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollows.get(i).getFollowing().getUserId()));
+            List<Follow> followings = followRepository.findFollowsByFollower_UserId(newPseudo.getUserId());
+            List<Follow> followers = followRepository.findFollowsByFollowing_UserId(newPseudo.getUserId());
+            List<Meow> meows =meowRepository.findMeowsByOwner_UserId(newPseudo.getUserId());
+            newPseudo.setNumberOfFollowings(followings.size());
+            newPseudo.setNumberOfFollowers(followers.size());
+            newPseudo.setNumberOfMeows(meows.size());
+            newList.add(newPseudo);
+        }
+        return newList;
+    }
 
 
 //    @Override

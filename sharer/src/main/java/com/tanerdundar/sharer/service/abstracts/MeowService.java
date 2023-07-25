@@ -14,10 +14,11 @@ public interface MeowService {
 
     boolean createNewMeow(MeowCreateRequest request);
 
-    List<Meow> getOneUsersMeowsByUserId(long userId);
+    List<PseudoMeow> getOneUsersMeowsByUserId(long userId);
 
     List<PseudoMeow> getHomeMeowsByUserId(long userId);
 
-//    Meow getOneMeowByUserId(long userId);
+    List<PseudoMeow> getAllMeowsPseudoByUserId(long userId,long ownerId);
+
 
 }

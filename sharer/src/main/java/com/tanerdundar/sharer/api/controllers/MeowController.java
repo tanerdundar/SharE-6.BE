@@ -1,6 +1,7 @@
 package com.tanerdundar.sharer.api.controllers;
 
 import com.tanerdundar.sharer.dto.PseudoMeow;
+import com.tanerdundar.sharer.dto.PseudoUser;
 import com.tanerdundar.sharer.entities.Meow;
 import com.tanerdundar.sharer.requests.meow.MeowCreateRequest;
 import com.tanerdundar.sharer.service.abstracts.MeowService;
@@ -23,13 +24,18 @@ public class MeowController {
     }
     @GetMapping("/{userId}")
     public ResponseEntity getOneUsersMeowsByUserId(@PathVariable long userId){
-        List<Meow> meows =meowService.getOneUsersMeowsByUserId(userId);
+        List<PseudoMeow> meows =meowService.getOneUsersMeowsByUserId(userId);
         return ResponseEntity.ok(meows);
     }
     @GetMapping("/home/{userId}")
     public ResponseEntity getHomeMeowsByUserId(@PathVariable long userId) {
         List<PseudoMeow> homeMeows = meowService.getHomeMeowsByUserId(userId);
         return ResponseEntity.ok(homeMeows);
+    }
+    @GetMapping("/{ownerId}/{userId}/meows")
+    public ResponseEntity getAllMeowsByUserId(@PathVariable long userId,@PathVariable long ownerId) {
+        List<PseudoMeow> allMeows=meowService.getAllMeowsPseudoByUserId(userId,ownerId);
+        return ResponseEntity.ok(allMeows);
     }
 
 

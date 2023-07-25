@@ -15,4 +15,7 @@ public interface LikeRepository  extends JpaRepository<Like,Long> {
 
     List<Like> findAllByLikedMeow_MeowId(long meowId);
 
+    Like getLikeByLiker_UserIdAndLikedMeow_MeowId(long userId,long meowId);
+    List<Like> getLikeByLikedMeow_MeowId(long meowId);
+
 }

@@ -46,8 +46,23 @@ public class MeowManager implements MeowService {
     }
 
     @Override
-    public List<Meow> getOneUsersMeowsByUserId(long userId) {
-        return  meowRepository.findMeowsByOwner_UserId(userId);
+    public List<PseudoMeow> getOneUsersMeowsByUserId(long userId) {
+        List<Meow> myMeows= meowRepository.findMeowsByOwner_UserId(userId);
+        PseudoUser pOwner=new PseudoUser(userRepository.findById(userId));
+        List<PseudoMeow> returning = new ArrayList<>();
+        for (int i=0;i< myMeows.size();i++){
+            PseudoMeow pMeow= new PseudoMeow(myMeows.get(i), likeRepository.existsLikeByLikedMeow_MeowIdAndLiker_UserId(myMeows.get(i).getMeowId(),userId),pOwner );
+            List<Like> likes=likeRepository.findAllByLikedMeow_MeowId(myMeows.get(i).getMeowId());
+            List<PseudoUser> likedUsers= new ArrayList<>();
+            for(int j=0;j< likes.size();j++){
+                Optional<User> liker= userRepository.findById(likes.get(j).getLiker().getUserId());
+                PseudoUser newPseudoUser= new PseudoUser(liker);
+                likedUsers.add(newPseudoUser);
+            }
+            pMeow.setLikedUsers(likedUsers);
+            returning.add(pMeow);
+        }
+        return  returning;
     }
 
     @Override
@@ -79,5 +94,27 @@ public class MeowManager implements MeowService {
         Comparator<PseudoMeow> reverseIdComparator = Collections.reverseOrder(idComparator);
         Collections.sort(meows, reverseIdComparator);
         return meows;
+    }
+
+    @Override
+    public List<PseudoMeow> getAllMeowsPseudoByUserId(long userId,long ownerId) {
+        List<Meow> allMeows =meowRepository.findMeowsByOwner_UserId(userId);
+        List<PseudoMeow> newList= new ArrayList<>();
+        for(int i=0;i<allMeows.size();i++){
+            boolean result =likeRepository.existsLikeByLikedMeow_MeowIdAndLiker_UserId(allMeows.get(i).getMeowId(),ownerId);
+            PseudoUser owner = new PseudoUser(userRepository.findById(userId));
+            PseudoMeow newPseudo = new PseudoMeow(allMeows.get(i),result,owner);
+            List<Like> likes=likeRepository.findAllByLikedMeow_MeowId(newPseudo.getMeowId());
+            List<PseudoUser> likedUsers= new ArrayList<>();
+            for(int j=0;j< likes.size();j++){
+                Optional<User> liker= userRepository.findById(likes.get(j).getLiker().getUserId());
+                PseudoUser newPseudoUser= new PseudoUser(liker);
+                likedUsers.add(newPseudoUser);
+            }
+            newPseudo.setLikedUsers(likedUsers);
+            newList.add(newPseudo);
+
+        }
+        return newList;
     }
 }

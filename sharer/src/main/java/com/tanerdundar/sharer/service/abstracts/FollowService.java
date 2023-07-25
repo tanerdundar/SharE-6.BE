@@ -15,7 +15,5 @@ public interface FollowService  {
     void createNewFollow(FollowCreateRequest request,long userId);
 
     List<Follow> getFollowsByUserId(long userId);
-
-
     boolean checkFollow(long userId,long searchedUserId);
 }

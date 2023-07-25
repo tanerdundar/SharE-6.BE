@@ -24,7 +24,7 @@ public class LikeManager implements LikeService {
 
     @Override
     public void createNewLike(long userId, long meowId) {
-//        boolean isThereThisLike= likeRepository.existsLikeByLikedMeow_MeowIdAndLiker_UserId(meowId,userId);
+//      boolean isThereThisLike= likeRepository.existsLikeByLikedMeow_MeowIdAndLiker_UserId(meowId,userId);
         User user= userRepository.findById(userId).get();
         Meow meow=meowRepository.findById(meowId).get();
         boolean isThereThisLike= likeRepository.existsLikeByLikedMeowAndLiker(meow,user);
@@ -47,5 +47,12 @@ public class LikeManager implements LikeService {
 
 
         return result;
+    }
+
+    @Override
+    public void deleteLike(long userId, long meowId) {
+        Like deletingLike = likeRepository.getLikeByLiker_UserIdAndLikedMeow_MeowId(userId, meowId);
+        likeRepository.delete(deletingLike);
+
     }
 }
