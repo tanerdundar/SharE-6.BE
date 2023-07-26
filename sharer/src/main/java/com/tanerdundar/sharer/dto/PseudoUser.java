@@ -3,7 +3,6 @@ package com.tanerdundar.sharer.dto;
 import com.tanerdundar.sharer.entities.Rank;
 import com.tanerdundar.sharer.entities.Status;
 import com.tanerdundar.sharer.entities.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

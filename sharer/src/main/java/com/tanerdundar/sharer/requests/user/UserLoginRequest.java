@@ -1,6 +1,5 @@
 package com.tanerdundar.sharer.requests.user;
 
-import com.tanerdundar.sharer.entities.User;
 import lombok.Data;
 
 @Data

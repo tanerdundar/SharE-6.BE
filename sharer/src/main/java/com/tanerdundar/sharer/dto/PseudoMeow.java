@@ -1,10 +1,7 @@
 package com.tanerdundar.sharer.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tanerdundar.sharer.entities.Meow;
 import com.tanerdundar.sharer.entities.Status;
-import com.tanerdundar.sharer.entities.User;
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.ZonedDateTime;

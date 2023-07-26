@@ -13,6 +13,7 @@ import com.tanerdundar.sharer.exceptionHandlers.exceptions.UserException;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.EmailException;
 import com.tanerdundar.sharer.requests.user.UserCreateRequest;
 import com.tanerdundar.sharer.requests.user.UserLoginRequest;
+import com.tanerdundar.sharer.requests.user.UserUpdateRequest;
 import com.tanerdundar.sharer.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,22 +57,6 @@ public class UserManager implements UserService {
 
         return userRepository.save(request.createOneUser());
     }
-
-//    @Override
-//    public boolean userLogin(UserLoginRequest request) {
-//        List<User> users=userRepository.findAll();
-//
-//        for(int i=0;i<users.size();i++){
-//            if(request.getUsername().equals(users.get(i).getUsername())){
-//                if(request.getPassword().equals(users.get(i).getPassword())) {
-//                    return true;
-//                }
-//            }
-//        }
-//        throw new PasswordException("Username or password is not true...");
-//
-//
-//    }
 @Override
 public long userLogin(UserLoginRequest request) {
     Optional<User> optionalUser = userRepository.findByUsername(request.getUsername());
@@ -155,26 +140,16 @@ public long userLogin(UserLoginRequest request) {
         return newList;
     }
 
+    @Override
+    public void updateOneUserName(long userId, UserUpdateRequest request) {
+       Optional<User> user = userRepository.findById(userId);
+       if(user.isPresent()){
+           User updateUser = user.get();
+           updateUser.setName(request.getName());
+           userRepository.save(updateUser);
+       }
 
-//    @Override
-//    public PseudoUser getOnePseudoUserByUsername(String username, PseudoUser pUser) {
-//        Optional<User> user =userRepository.findByUsername(username);
-//        return pUser.newPseudo(user);
-//    }
-
-//    @Override
-//    public PseudoUser checkUserByUsername(String username,long followerId) {
-//        Optional<User> user = userRepository.findByUsername(username);
-//        PseudoUser pUser = new PseudoUser();
-//        if(user.isPresent()){
-//             boolean follow = followRepository.existsFollowByFollower_UserIdAndFollowing_UserId(user.get().getUserId(),followerId);
-//            System.out.println(user.get().getUserId());
-//            System.out.println(followerId);
-//             return pUser.newPseudo(user,follow);
-//
-//        } else
-//            throw new UserException();
-//    }
+    }
 
 }
 

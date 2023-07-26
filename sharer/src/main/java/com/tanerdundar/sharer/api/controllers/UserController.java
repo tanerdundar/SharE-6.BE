@@ -2,11 +2,10 @@ package com.tanerdundar.sharer.api.controllers;
 
 
 import com.tanerdundar.sharer.dto.PseudoUser;
-import com.tanerdundar.sharer.entities.Follow;
 import com.tanerdundar.sharer.entities.User;
 import com.tanerdundar.sharer.requests.user.UserCreateRequest;
 import com.tanerdundar.sharer.requests.user.UserLoginRequest;
-import com.tanerdundar.sharer.service.abstracts.FollowService;
+import com.tanerdundar.sharer.requests.user.UserUpdateRequest;
 import com.tanerdundar.sharer.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +60,10 @@ public class UserController {
         List<PseudoUser> allFollowings=userService.getAllFollowingsPseudoByUserId(ownerId,userId);
         return ResponseEntity.ok(allFollowings);
     }
-
+    @PutMapping("/{userId}")
+    public void setUserName(@PathVariable long userId,@RequestBody UserUpdateRequest request){
+        userService.updateOneUserName(userId,request);
+    }
 
 
 
