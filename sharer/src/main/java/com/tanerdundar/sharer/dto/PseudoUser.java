@@ -27,6 +27,15 @@ public class PseudoUser {
     private long numberOfFollowers;
 
 
+    public PseudoUser(User user){
+        this.userId=user.getUserId();
+        this.username=user.getUsername();
+        this.name=user.getName();
+        this.email=user.getEmail();
+        this.userStatus=user.getUserStatus();
+        this.userRank=user.getUserRank();
+        this.backgroundColor=user.getBackgroundColor();
+    }
     public PseudoUser(Optional<User> user){
         this.userId=user.get().getUserId();
         this.username=user.get().getUsername();

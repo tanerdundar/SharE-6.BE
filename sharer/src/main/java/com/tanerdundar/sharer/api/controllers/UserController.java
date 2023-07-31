@@ -29,7 +29,7 @@ public class UserController {
     }
     @PostMapping
     public ResponseEntity createOneUser( @RequestBody UserCreateRequest request) {
-        User user= userService.createOneUser(request);
+        PseudoUser user= userService.createOneUser(request);
         return ResponseEntity.ok(user);
     }
     @PostMapping("/login")
@@ -42,8 +42,6 @@ public class UserController {
         PseudoUser user = userService.getOnePseudoUserByUserId(userId,pUser);
         return ResponseEntity.ok(user);
     }
-
-
 
     @GetMapping("/check/{username}/{followerId}")
     public ResponseEntity checkUserByUsername(@PathVariable String username,@PathVariable long followerId){

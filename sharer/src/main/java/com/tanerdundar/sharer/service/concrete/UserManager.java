@@ -42,7 +42,7 @@ public class UserManager implements UserService {
     }
 
     @Override
-    public User createOneUser(UserCreateRequest request) {
+    public PseudoUser createOneUser(UserCreateRequest request) {
         List<User> users=userRepository.findAll();
         for (int i=0;i<users.size();i++){
             if(request.getUsername().equals(users.get(i).getUsername())){
@@ -54,8 +54,10 @@ public class UserManager implements UserService {
                 throw new EmailException("Existing email address!...");
             }
         }
-
-        return userRepository.save(request.createOneUser());
+        User user = request.createOneUser();
+         userRepository.save(user);
+        PseudoUser pUser = new PseudoUser(user);
+        return pUser;
     }
 @Override
 public long userLogin(UserLoginRequest request) {

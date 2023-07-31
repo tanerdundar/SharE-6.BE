@@ -62,6 +62,9 @@ public class MeowManager implements MeowService {
             pMeow.setLikedUsers(likedUsers);
             returning.add(pMeow);
         }
+        Comparator<PseudoMeow> idComparator = Comparator.comparingLong(PseudoMeow::getMeowId);
+        Comparator<PseudoMeow> reverseIdComparator = Collections.reverseOrder(idComparator);
+        Collections.sort(returning, reverseIdComparator);
         return  returning;
     }
 
@@ -115,6 +118,9 @@ public class MeowManager implements MeowService {
             newList.add(newPseudo);
 
         }
+        Comparator<PseudoMeow> idComparator = Comparator.comparingLong(PseudoMeow::getMeowId);
+        Comparator<PseudoMeow> reverseIdComparator = Collections.reverseOrder(idComparator);
+        Collections.sort(newList, reverseIdComparator);
         return newList;
     }
 }
