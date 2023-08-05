@@ -3,6 +3,7 @@ package com.tanerdundar.sharer.api.controllers;
 import com.tanerdundar.sharer.dto.PseudoMeow;
 import com.tanerdundar.sharer.dto.PseudoUser;
 import com.tanerdundar.sharer.entities.Meow;
+import com.tanerdundar.sharer.entities.User;
 import com.tanerdundar.sharer.requests.meow.MeowCreateRequest;
 import com.tanerdundar.sharer.service.abstracts.MeowService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,12 @@ import java.util.List;
 public class MeowController {
 
     private final MeowService meowService;
+
+    @GetMapping
+    public ResponseEntity getAllUsers() {
+        List<Meow> meows = meowService.getAllMeows();
+        return ResponseEntity.ok(meows);
+    }
 
     @PostMapping
     public boolean createNewMeow(@RequestBody MeowCreateRequest request) {

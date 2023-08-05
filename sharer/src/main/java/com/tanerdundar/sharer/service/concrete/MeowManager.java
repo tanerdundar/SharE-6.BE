@@ -28,6 +28,11 @@ public class MeowManager implements MeowService {
 
 
     @Override
+    public List<Meow> getAllMeows() {
+        return meowRepository.findAll();
+    }
+
+    @Override
     public boolean createNewMeow(MeowCreateRequest request) {
         if(request.getContent().length()>189){
             throw new MeowException("Type max 189 character please");
