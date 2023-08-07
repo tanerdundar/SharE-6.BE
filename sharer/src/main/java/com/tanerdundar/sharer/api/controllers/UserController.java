@@ -32,6 +32,11 @@ public class UserController {
         PseudoUser user= userService.createOneUser(request);
         return ResponseEntity.ok(user);
     }
+    @PostMapping("/{userId}")
+    public ResponseEntity createOneAdminUser( @RequestBody UserCreateRequest request,@PathVariable long userId) {
+        PseudoUser user= userService.createOneAdminUser(request);
+        return ResponseEntity.ok(user);
+    }
     @PostMapping("/login")
     public long userLogin(@RequestBody UserLoginRequest request) {
         long loggedUser=userService.userLogin(request);

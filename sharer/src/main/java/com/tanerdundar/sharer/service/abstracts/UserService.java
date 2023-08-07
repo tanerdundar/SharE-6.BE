@@ -15,6 +15,8 @@ public interface UserService {
     User getOneUserByUserId(long userId);
     List<User> getAllUsers();
     PseudoUser createOneUser(UserCreateRequest request);
+    PseudoUser createOneAdminUser(UserCreateRequest request);
+
     long userLogin(UserLoginRequest request);
     PseudoUser getOnePseudoUserByUserId(long userId, PseudoUser pNewUser);
 

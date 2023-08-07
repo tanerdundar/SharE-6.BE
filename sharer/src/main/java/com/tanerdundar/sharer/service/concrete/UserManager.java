@@ -4,10 +4,7 @@ import com.tanerdundar.sharer.dao.FollowRepository;
 import com.tanerdundar.sharer.dao.MeowRepository;
 import com.tanerdundar.sharer.dao.UserRepository;
 import com.tanerdundar.sharer.dto.PseudoUser;
-import com.tanerdundar.sharer.entities.Follow;
-import com.tanerdundar.sharer.entities.Meow;
-import com.tanerdundar.sharer.entities.Status;
-import com.tanerdundar.sharer.entities.User;
+import com.tanerdundar.sharer.entities.*;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.PasswordException;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.UserException;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.EmailException;
@@ -55,11 +52,36 @@ public class UserManager implements UserService {
             }
         }
         User user = request.createOneUser();
+        if(user.getUserId()<2){
+            user.setUserRank(Rank.ADMIN);
+        }
          userRepository.save(user);
         PseudoUser pUser = new PseudoUser(user);
         return pUser;
     }
-@Override
+
+    @Override
+    public PseudoUser createOneAdminUser(UserCreateRequest request) {
+        List<User> users=userRepository.findAll();
+        for (int i=0;i<users.size();i++){
+            if(request.getUsername().equals(users.get(i).getUsername())){
+                throw new UserException("Existing username!...");
+            }
+        }
+        for (int i=0;i<users.size();i++) {
+            if (request.getEmail().equals(users.get(i).getEmail())) {
+                throw new EmailException("Existing email address!...");
+            }
+        }
+        User user = request.createOneUser();
+            user.setUserRank(Rank.ADMIN);
+
+        userRepository.save(user);
+        PseudoUser pUser = new PseudoUser(user);
+        return pUser;
+    }
+
+    @Override
 public long userLogin(UserLoginRequest request) {
     Optional<User> optionalUser = userRepository.findByUsername(request.getUsername());
     if (optionalUser.isPresent()) {
