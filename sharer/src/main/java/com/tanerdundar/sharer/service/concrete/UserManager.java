@@ -52,11 +52,13 @@ public class UserManager implements UserService {
             }
         }
         User user = request.createOneUser();
+         userRepository.save(user);
         if(user.getUserId()<2){
             user.setUserRank(Rank.ADMIN);
+            userRepository.save(user);
         }
-         userRepository.save(user);
         PseudoUser pUser = new PseudoUser(user);
+
         return pUser;
     }
 
