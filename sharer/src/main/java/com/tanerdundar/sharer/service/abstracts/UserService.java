@@ -27,4 +27,6 @@ public interface UserService {
     List<PseudoUser> getAllFollowingsPseudoByUserId(long ownerId,long userId);
 
     void updateOneUserName(long userId, UserUpdateRequest request);
+
+    List<PseudoUser> getAllUsersForZeroFollow();
 }

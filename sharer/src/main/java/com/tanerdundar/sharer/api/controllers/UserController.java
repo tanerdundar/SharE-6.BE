@@ -67,7 +67,11 @@ public class UserController {
     public void setUserName(@PathVariable long userId,@RequestBody UserUpdateRequest request){
         userService.updateOneUserName(userId,request);
     }
-
+    @GetMapping("/zero")
+    public ResponseEntity getAllUsersForZeroFollow() {
+        List<PseudoUser> users = userService.getAllUsersForZeroFollow();
+        return ResponseEntity.ok(users);
+    }
 
 
 }

@@ -177,6 +177,19 @@ public long userLogin(UserLoginRequest request) {
 
     }
 
+    @Override
+    public List<PseudoUser> getAllUsersForZeroFollow() {
+        List<PseudoUser> users = new ArrayList<>();
+        for (int i=0;i<userRepository.findAll().size();i++){
+            PseudoUser nUser = new PseudoUser(userRepository.findAll().get(i));
+            nUser.setNumberOfMeows(meowRepository.findMeowsByOwner_UserId(nUser.getUserId()).size());
+            nUser.setNumberOfFollowings(followRepository.findFollowsByFollowing_UserId(nUser.getUserId()).size());
+            nUser.setNumberOfFollowers(followRepository.findFollowsByFollower_UserId(nUser.getUserId()).size());
+            users.add(nUser);
+        }
+        return users;
+    }
+
 }
 
 
