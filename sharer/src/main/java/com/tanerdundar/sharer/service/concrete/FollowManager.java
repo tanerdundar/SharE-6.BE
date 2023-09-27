@@ -1,6 +1,8 @@
 package com.tanerdundar.sharer.service.concrete;
 
 import com.tanerdundar.sharer.dao.FollowRepository;
+import com.tanerdundar.sharer.dao.UserRepository;
+import com.tanerdundar.sharer.dto.PseudoUser;
 import com.tanerdundar.sharer.entities.Follow;
 import com.tanerdundar.sharer.entities.Status;
 import com.tanerdundar.sharer.requests.follow.FollowCheckRequest;
@@ -21,6 +23,7 @@ public class FollowManager implements FollowService {
 
     private final FollowRepository followRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
 
     @Override
@@ -49,7 +52,18 @@ public class FollowManager implements FollowService {
 
     @Override
     public List<Follow> getFollowsByUserId(long userId) {
-        return followRepository.findFollowsByFollower_UserId(userId);
+//        List<Follow> toPseudo =followRepository.findFollowsByFollower_UserId(userId);
+//        PseudoUser newPFollower= new PseudoUser(userRepository.findById(userId));
+//        for(int j=0;j<toPseudo.size();j++){
+//            toPseudo.get(j).setFollower(newPFollower);
+//        }
+//        for(int i=0;i<toPseudo.size();i++) {
+//            PseudoUser newP = new PseudoUser(toPseudo.get(i).getFollowing());
+//            to
+//        }
+
+
+            return followRepository.findFollowsByFollower_UserId(userId);
     }
 
     @Override

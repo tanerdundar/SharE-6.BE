@@ -63,24 +63,27 @@ public class UserManager implements UserService {
     }
 
     @Override
-    public PseudoUser createOneAdminUser(UserCreateRequest request) {
-        List<User> users=userRepository.findAll();
-        for (int i=0;i<users.size();i++){
-            if(request.getUsername().equals(users.get(i).getUsername())){
-                throw new UserException("Existing username!...");
+    public PseudoUser createOneAdminUser(UserCreateRequest request,long userId) {
+        if(userRepository.findById(userId).get().getUserRank()==Rank.ADMIN){
+            List<User> users=userRepository.findAll();
+            for (int i=0;i<users.size();i++){
+                if(request.getUsername().equals(users.get(i).getUsername())){
+                    throw new UserException("Existing username!...");
+                }
             }
-        }
-        for (int i=0;i<users.size();i++) {
-            if (request.getEmail().equals(users.get(i).getEmail())) {
-                throw new EmailException("Existing email address!...");
+            for (int i=0;i<users.size();i++) {
+                if (request.getEmail().equals(users.get(i).getEmail())) {
+                    throw new EmailException("Existing email address!...");
+                }
             }
-        }
-        User user = request.createOneUser();
+            User user = request.createOneUser();
             user.setUserRank(Rank.ADMIN);
 
-        userRepository.save(user);
-        PseudoUser pUser = new PseudoUser(user);
-        return pUser;
+            userRepository.save(user);
+            PseudoUser pUser = new PseudoUser(user);
+            return pUser;
+        } else throw new UserException("You dont have authorization!..");
+
     }
 
     @Override
@@ -98,8 +101,8 @@ public long userLogin(UserLoginRequest request) {
     @Override
     public PseudoUser getOnePseudoUserByUserId(long userId, PseudoUser pNewUser) {
         Optional<User> user =userRepository.findById(userId);
-        long followers= followRepository.findFollowsByFollowing_UserId(userId).size();
-        long followings= followRepository.findFollowsByFollower_UserId(userId).size();
+        long followers= followRepository.findFollowsByFollowing_UserIdAndFollowStatus(userId,Status.ACTIVE).size();
+        long followings= followRepository.findFollowsByFollower_UserIdAndFollowStatus(userId,Status.ACTIVE).size();
         long meows= meowRepository.findMeowsByOwner_UserId(userId).size();
         PseudoUser pseudo= pNewUser.newPseudo(user,true);
         pseudo.setNumberOfMeows(meows);
