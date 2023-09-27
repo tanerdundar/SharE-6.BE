@@ -16,4 +16,6 @@ public interface FollowService  {
 
     List<Follow> getFollowsByUserId(long userId);
     boolean checkFollow(long userId,long searchedUserId);
+
+    List<Follow> getAllFollows();
 }

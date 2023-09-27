@@ -34,6 +34,11 @@ public class FollowController {
         boolean isFollowing = followService.checkFollow(userId,searchedUserId);
                 return isFollowing;
     }
+    @GetMapping
+    public ResponseEntity getAllFollows(){
+        List<Follow> follows=followService.getAllFollows();
+        return ResponseEntity.ok(follows);
+    }
 
 //    @PutMapping("/follow/unfollow")
 //    public Follow updateOneFollowStatus(@PathVariable Long followId, @RequestBody FollowUpdateRequest updateFollow) {

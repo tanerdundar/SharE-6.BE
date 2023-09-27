@@ -76,5 +76,11 @@ public class FollowManager implements FollowService {
             }
     }
 
+    @Override
+    public List<Follow> getAllFollows() {
+        List<Follow> follows= followRepository.findAll();
+        return follows;
+    }
+
 
 }
