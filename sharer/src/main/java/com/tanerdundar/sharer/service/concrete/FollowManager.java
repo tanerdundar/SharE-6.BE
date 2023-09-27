@@ -63,7 +63,7 @@ public class FollowManager implements FollowService {
 //        }
 
 
-            return followRepository.findFollowsByFollower_UserId(userId);
+            return followRepository.findFollowsByFollower_UserIdAndFollowStatus(userId,Status.ACTIVE);
     }
 
     @Override

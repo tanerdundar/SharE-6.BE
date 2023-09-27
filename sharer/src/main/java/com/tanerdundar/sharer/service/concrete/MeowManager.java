@@ -75,7 +75,7 @@ public class MeowManager implements MeowService {
 
     @Override
     public List<PseudoMeow> getHomeMeowsByUserId(long userId) {
-        List<Follow> followings = followRepository.findFollowsByFollower_UserId(userId);
+        List<Follow> followings = followRepository.findFollowsByFollower_UserIdAndFollowStatus(userId,Status.ACTIVE);
         List<PseudoMeow> meows= new ArrayList<>();
         for (Follow following : followings) {
             Optional<User> user = userRepository.findById(following.getFollowing().getUserId());

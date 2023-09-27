@@ -124,8 +124,8 @@ public long userLogin(UserLoginRequest request) {
         }
 
         PseudoUser pseudo = new PseudoUser(user,follow);
-        pseudo.setNumberOfFollowers(followRepository.findFollowsByFollowing_UserId(pseudo.getUserId()).size());
-        pseudo.setNumberOfFollowings(followRepository.findFollowsByFollower_UserId(pseudo.getUserId()).size());
+        pseudo.setNumberOfFollowers(followRepository.findFollowsByFollowing_UserIdAndFollowStatus(pseudo.getUserId(),Status.ACTIVE).size());
+        pseudo.setNumberOfFollowings(followRepository.findFollowsByFollower_UserIdAndFollowStatus(pseudo.getUserId(),Status.ACTIVE).size());
         pseudo.setNumberOfMeows(meowRepository.findMeowsByOwner_UserId(pseudo.getUserId()).size());
 
         return pseudo;
@@ -137,12 +137,12 @@ public long userLogin(UserLoginRequest request) {
 
     @Override
     public List<PseudoUser> getAllFollowersPseudoByUserId(long ownerId,long userId) {
-        List<Follow> allFollows =followRepository.findFollowsByFollowing_UserId( userId);
+        List<Follow> allFollows =followRepository.findFollowsByFollowing_UserIdAndFollowStatus( userId,Status.ACTIVE);
         List<PseudoUser> newList= new ArrayList<>();
         for(int i=0;i<allFollows.size();i++){
             PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollows.get(i).getFollower().getUserId()));
-            List<Follow> followings = followRepository.findFollowsByFollower_UserId(newPseudo.getUserId());
-            List<Follow> followers = followRepository.findFollowsByFollowing_UserId(newPseudo.getUserId());
+            List<Follow> followings = followRepository.findFollowsByFollower_UserIdAndFollowStatus(newPseudo.getUserId(),Status.ACTIVE);
+            List<Follow> followers = followRepository.findFollowsByFollowing_UserIdAndFollowStatus(newPseudo.getUserId(),Status.ACTIVE);
             List<Meow> meows =meowRepository.findMeowsByOwner_UserId(newPseudo.getUserId());
             newPseudo.setNumberOfFollowings(followings.size());
             newPseudo.setNumberOfFollowers(followers.size());
@@ -154,12 +154,12 @@ public long userLogin(UserLoginRequest request) {
 
     @Override
     public List<PseudoUser> getAllFollowingsPseudoByUserId(long ownerId,long userId) {
-        List<Follow> allFollows =followRepository.findFollowsByFollower_UserId(userId);
+        List<Follow> allFollows =followRepository.findFollowsByFollower_UserIdAndFollowStatus(userId,Status.ACTIVE);
         List<PseudoUser> newList= new ArrayList<>();
         for(int i=0;i<allFollows.size();i++){
             PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollows.get(i).getFollowing().getUserId()));
-            List<Follow> followings = followRepository.findFollowsByFollower_UserId(newPseudo.getUserId());
-            List<Follow> followers = followRepository.findFollowsByFollowing_UserId(newPseudo.getUserId());
+            List<Follow> followings = followRepository.findFollowsByFollower_UserIdAndFollowStatus(newPseudo.getUserId(),Status.ACTIVE);
+            List<Follow> followers = followRepository.findFollowsByFollowing_UserIdAndFollowStatus(newPseudo.getUserId(),Status.ACTIVE);
             List<Meow> meows =meowRepository.findMeowsByOwner_UserId(newPseudo.getUserId());
             newPseudo.setNumberOfFollowings(followings.size());
             newPseudo.setNumberOfFollowers(followers.size());
