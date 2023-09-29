@@ -44,13 +44,21 @@ public class UserManager implements UserService {
         for (int i=0;i<users.size();i++){
             if(request.getUsername().equals(users.get(i).getUsername())){
                 throw new UserException("Existing username!...");
+            }else if (request.getUsername().length()<5){
+                throw new UserException("At least 5 character please!.. ");
             }
         }
         for (int i=0;i<users.size();i++) {
+            String regex = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,6}$";
             if (request.getEmail().equals(users.get(i).getEmail())) {
                 throw new EmailException("Existing email address!...");
             }
-        }
+            if (!request.getEmail().matches(regex)){
+                    throw new EmailException("A valid email please!...");
+                }
+
+            }
+
         User user = request.createOneUser();
          userRepository.save(user);
         if(user.getUserId()<2){
@@ -70,10 +78,17 @@ public class UserManager implements UserService {
                 if(request.getUsername().equals(users.get(i).getUsername())){
                     throw new UserException("Existing username!...");
                 }
+                else if (request.getUsername().length()<5){
+                    throw new UserException("At least 5 character please!.. ");
+                }
             }
             for (int i=0;i<users.size();i++) {
+                String regex = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,6}$";
                 if (request.getEmail().equals(users.get(i).getEmail())) {
                     throw new EmailException("Existing email address!...");
+                }
+                if (!request.getEmail().matches(regex)){
+                    throw new EmailException("A valid email please!...");
                 }
             }
             User user = request.createOneUser();
