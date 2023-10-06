@@ -29,4 +29,6 @@ public interface UserService {
     void updateOneUserName(long userId, UserUpdateRequest request);
 
     List<PseudoUser> getAllUsersForZeroFollow();
+
+    List<String> getUsersName(String username);
 }

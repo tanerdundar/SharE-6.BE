@@ -52,6 +52,11 @@ public class UserController {
         PseudoUser pseudo = userService.getOnePseudoUserByUsername(username,followerId);
         return ResponseEntity.ok(pseudo);
     }
+    @GetMapping("/findSuggestions/{username}")
+    public ResponseEntity findSuggestions(@PathVariable String username){
+        List<String> users= userService.getUsersName(username);
+        return ResponseEntity.ok(users);
+    }
     @GetMapping("/{ownerId}/{userId}/followers")
     public ResponseEntity getAllFollowersByUserId(@PathVariable long ownerId,@PathVariable long userId) {
         List<PseudoUser> allFollowers=userService.getAllFollowersPseudoByUserId(ownerId,userId);
