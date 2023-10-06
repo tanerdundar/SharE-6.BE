@@ -212,9 +212,16 @@ public long userLogin(UserLoginRequest request) {
     public List<String> getUsersName(String username) {
         List<User> users = userRepository.findAllByUsernameContains(username);
         List<String> userName = new ArrayList<String>();
-        for (int i=0;i<4;i++){
-            userName.add(users.get(i).getUsername());
+        if (users.size() > 3) {
+            for (int i=0;i<4;i++){
+                userName.add(users.get(i).getUsername());
+            }
+        } else {
+            for (int i=0;i<users.size();i++){
+                userName.add(users.get(i).getUsername());
+            }
         }
+
         return userName;
     }
 
