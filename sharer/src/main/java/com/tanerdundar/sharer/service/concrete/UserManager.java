@@ -151,6 +151,11 @@ public long userLogin(UserLoginRequest request) {
    }
 
     @Override
+    public PseudoUser getOnePseudoUserByUsername(String username) {
+        return new PseudoUser(userRepository.findByUsername(username));
+    }
+
+    @Override
     public List<PseudoUser> getAllFollowersPseudoByUserId(long ownerId,long userId) {
         List<Follow> allFollows =followRepository.findFollowsByFollowing_UserIdAndFollowStatus( userId,Status.ACTIVE);
         List<PseudoUser> newList= new ArrayList<>();

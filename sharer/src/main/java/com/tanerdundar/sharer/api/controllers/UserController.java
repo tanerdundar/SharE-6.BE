@@ -76,6 +76,10 @@ public class UserController {
         List<PseudoUser> users = userService.getAllUsersForZeroFollow();
         return ResponseEntity.ok(users);
     }
-
+    @GetMapping("/findToUpdate/{username}")
+    public ResponseEntity getOneUserByUsername(@PathVariable String username){
+        PseudoUser user = userService.getOnePseudoUserByUsername(username);
+        return ResponseEntity.ok(user);
+    }
 
 }
