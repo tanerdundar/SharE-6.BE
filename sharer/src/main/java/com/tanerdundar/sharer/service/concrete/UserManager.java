@@ -40,63 +40,23 @@ public class UserManager implements UserService {
 
     @Override
     public PseudoUser createOneUser(UserCreateRequest request) {
-        List<User> users=userRepository.findAll();
-        for (int i=0;i<users.size();i++){
-            if(request.getUsername().equals(users.get(i).getUsername())){
-                throw new UserException("Existing username!...");
-            }else if (request.getUsername().length()<5){
-                throw new UserException("At least 5 character please!.. ");
-            }
-        }
-        for (int i=0;i<users.size();i++) {
-            String regex = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,6}$";
-            if (request.getEmail().equals(users.get(i).getEmail())) {
-                throw new EmailException("Existing email address!...");
-            }
-            if (!request.getEmail().matches(regex)){
-                    throw new EmailException("A valid email please!...");
-                }
 
-            }
-
-        User user = request.createOneUser();
-         userRepository.save(user);
-        if(user.getUserId()<2){
-            user.setUserRank(Rank.ADMIN);
-            userRepository.save(user);
-        }
-        PseudoUser pUser = new PseudoUser(user);
-
-        return pUser;
+        User user =checkUserNameAndEmailValidation(request);
+        userRepository.save(user);
+        return new PseudoUser(user);
     }
+
+
+
 
     @Override
     public PseudoUser createOneAdminUser(UserCreateRequest request,long userId) {
-        if(userRepository.findById(userId).get().getUserRank()==Rank.ADMIN){
-            List<User> users=userRepository.findAll();
-            for (int i=0;i<users.size();i++){
-                if(request.getUsername().equals(users.get(i).getUsername())){
-                    throw new UserException("Existing username!...");
-                }
-                else if (request.getUsername().length()<5){
-                    throw new UserException("At least 5 character please!.. ");
-                }
-            }
-            for (int i=0;i<users.size();i++) {
-                String regex = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,6}$";
-                if (request.getEmail().equals(users.get(i).getEmail())) {
-                    throw new EmailException("Existing email address!...");
-                }
-                if (!request.getEmail().matches(regex)){
-                    throw new EmailException("A valid email please!...");
-                }
-            }
-            User user = request.createOneUser();
+        if(userRepository.findById(userId).isPresent()&&userRepository.findById(userId).get().getUserRank()==Rank.ADMIN){
+           User user =checkUserNameAndEmailValidation(request);
             user.setUserRank(Rank.ADMIN);
 
             userRepository.save(user);
-            PseudoUser pUser = new PseudoUser(user);
-            return pUser;
+            return new PseudoUser(user);
         } else throw new UserException("You dont have authorization!..");
 
     }
@@ -159,34 +119,27 @@ public long userLogin(UserLoginRequest request) {
     public List<PseudoUser> getAllFollowersPseudoByUserId(long ownerId,long userId) {
         List<Follow> allFollows =followRepository.findFollowsByFollowing_UserIdAndFollowStatus( userId,Status.ACTIVE);
         List<PseudoUser> newList= new ArrayList<>();
-        for(int i=0;i<allFollows.size();i++){
-            PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollows.get(i).getFollower().getUserId()));
-            List<Follow> followings = followRepository.findFollowsByFollower_UserIdAndFollowStatus(newPseudo.getUserId(),Status.ACTIVE);
-            List<Follow> followers = followRepository.findFollowsByFollowing_UserIdAndFollowStatus(newPseudo.getUserId(),Status.ACTIVE);
-            List<Meow> meows =meowRepository.findMeowsByOwner_UserId(newPseudo.getUserId());
-            newPseudo.setNumberOfFollowings(followings.size());
-            newPseudo.setNumberOfFollowers(followers.size());
-            newPseudo.setNumberOfMeows(meows.size());
-            newList.add(newPseudo);
+        List<PseudoUser> newReturnList= new ArrayList<>();
+        for (Follow allFollow : allFollows) {
+            PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollow.getFollower().getUserId()));
+           newReturnList=setFollowersAndFollowings(newList, newPseudo);
         }
-        return newList;
+        return newReturnList;
     }
+
+
+
 
     @Override
     public List<PseudoUser> getAllFollowingsPseudoByUserId(long ownerId,long userId) {
         List<Follow> allFollows =followRepository.findFollowsByFollower_UserIdAndFollowStatus(userId,Status.ACTIVE);
         List<PseudoUser> newList= new ArrayList<>();
-        for(int i=0;i<allFollows.size();i++){
-            PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollows.get(i).getFollowing().getUserId()));
-            List<Follow> followings = followRepository.findFollowsByFollower_UserIdAndFollowStatus(newPseudo.getUserId(),Status.ACTIVE);
-            List<Follow> followers = followRepository.findFollowsByFollowing_UserIdAndFollowStatus(newPseudo.getUserId(),Status.ACTIVE);
-            List<Meow> meows =meowRepository.findMeowsByOwner_UserId(newPseudo.getUserId());
-            newPseudo.setNumberOfFollowings(followings.size());
-            newPseudo.setNumberOfFollowers(followers.size());
-            newPseudo.setNumberOfMeows(meows.size());
-            newList.add(newPseudo);
+        List<PseudoUser> newReturnList= new ArrayList<>();
+        for (Follow allFollow : allFollows) {
+            PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollow.getFollowing().getUserId()));
+           newReturnList= setFollowersAndFollowings(newList, newPseudo);
         }
-        return newList;
+        return newReturnList;
     }
 
     @Override
@@ -222,14 +175,47 @@ public long userLogin(UserLoginRequest request) {
                 userName.add(users.get(i).getUsername());
             }
         } else {
-            for (int i=0;i<users.size();i++){
-                userName.add(users.get(i).getUsername());
+            for (User user : users) {
+                userName.add(user.getUsername());
             }
         }
 
         return userName;
     }
 
+    private User checkUserNameAndEmailValidation(UserCreateRequest request) {
+        List<User> users=userRepository.findAll();
+        for (User item : users) {
+            if (request.getUsername().equals(item.getUsername())) {
+                throw new UserException("Existing username!...");
+            } else if (request.getUsername().length() < 5) {
+                throw new UserException("At least 5 character please!.. ");
+            }
+        }
+        for (User value : users) {
+            String regex = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,6}$";
+            if (request.getEmail().equals(value.getEmail())) {
+                throw new EmailException("Existing email address!...");
+            }
+            if (!request.getEmail().matches(regex)) {
+                throw new EmailException("A valid email please!...");
+            }
+
+        }
+
+        return request.createOneUser();
+    }
+
+    private List<PseudoUser> setFollowersAndFollowings(List<PseudoUser> newList, PseudoUser newPseudo) {
+        List<Follow> followings = followRepository.findFollowsByFollower_UserIdAndFollowStatus(newPseudo.getUserId(), Status.ACTIVE);
+        List<Follow> followers = followRepository.findFollowsByFollowing_UserIdAndFollowStatus(newPseudo.getUserId(), Status.ACTIVE);
+        List<Meow> meows = meowRepository.findMeowsByOwner_UserId(newPseudo.getUserId());
+        newPseudo.setNumberOfFollowings(followings.size());
+        newPseudo.setNumberOfFollowers(followers.size());
+        newPseudo.setNumberOfMeows(meows.size());
+        newList.add(newPseudo);
+        return newList;
+    }
 }
 
 

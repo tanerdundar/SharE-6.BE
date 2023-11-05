@@ -38,8 +38,7 @@ public class UserController {
     }
     @PostMapping("/login")
     public long userLogin(@RequestBody UserLoginRequest request) {
-        long loggedUser=userService.userLogin(request);
-        return loggedUser;
+        return userService.userLogin(request);
     }
     @GetMapping("/{userId}")
     public ResponseEntity getOnePseudoUserByUserId(@PathVariable long userId, PseudoUser pUser) {

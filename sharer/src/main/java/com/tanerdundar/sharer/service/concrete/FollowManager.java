@@ -1,11 +1,8 @@
 package com.tanerdundar.sharer.service.concrete;
 
 import com.tanerdundar.sharer.dao.FollowRepository;
-import com.tanerdundar.sharer.dao.UserRepository;
-import com.tanerdundar.sharer.dto.PseudoUser;
 import com.tanerdundar.sharer.entities.Follow;
 import com.tanerdundar.sharer.entities.Status;
-import com.tanerdundar.sharer.requests.follow.FollowCheckRequest;
 import com.tanerdundar.sharer.requests.follow.FollowCreateRequest;
 import com.tanerdundar.sharer.service.abstracts.FollowService;
 import com.tanerdundar.sharer.service.abstracts.UserService;
@@ -23,12 +20,11 @@ public class FollowManager implements FollowService {
 
     private final FollowRepository followRepository;
     private final UserService userService;
-    private final UserRepository userRepository;
 
 
     @Override
     public void createNewFollow(FollowCreateRequest request,long userId) {
-        if(!followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).isPresent()){
+        if(followRepository.findFollowsByFollower_UserIdAndFollowing_UserId( userId, request.getFollowingId()).isEmpty()){
             System.out.println(userId+" "+ request.getFollowingId()+"'i takip etmiyor" );
             Follow newFollow= new Follow();
             newFollow.setFollower(userService.getOneUserByUserId(userId));
@@ -69,17 +65,13 @@ public class FollowManager implements FollowService {
     @Override
     public boolean checkFollow(long userId,long searchedUserId) {
         Optional<Follow> follow = followRepository.findFollowsByFollower_UserIdAndFollowing_UserId(userId, searchedUserId);
-        if (follow== null||follow.get().getFollowStatus()== Status.INACTIVE){
-            return false;
-        } else {
-                return true;
-            }
+        return follow.isPresent() && follow.get().getFollowStatus() != Status.INACTIVE;
+
     }
 
     @Override
     public List<Follow> getAllFollows() {
-        List<Follow> follows= followRepository.findAll();
-        return follows;
+        return followRepository.findAll();
     }
 
 
