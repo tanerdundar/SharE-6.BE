@@ -1,6 +1,7 @@
 package com.tanerdundar.sharer.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tanerdundar.sharer.exceptionHandlers.exceptions.UserException;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -75,5 +76,11 @@ public class User {
         int p =  (int)Math.round((Math.random()*14)-0.5);
             color=colors[p];
         return color;
+    }
+
+    static public void validate(User user){
+        if(user.getName().length()<3){
+            throw new UserException("Username can not be shorter than 3 character!..");
+        }
     }
 }

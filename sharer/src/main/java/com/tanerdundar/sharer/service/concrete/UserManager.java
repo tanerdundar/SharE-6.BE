@@ -13,6 +13,7 @@ import com.tanerdundar.sharer.requests.user.UserLoginRequest;
 import com.tanerdundar.sharer.requests.user.UserUpdateRequest;
 import com.tanerdundar.sharer.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import java.util.Optional;
 @Service
 public class UserManager implements UserService {
 
+    @Autowired
+    private EmailSenderManager senderService;
     private final UserRepository userRepository;
     private final MeowRepository meowRepository;
     private final FollowRepository followRepository;
@@ -41,6 +44,8 @@ public class UserManager implements UserService {
     @Override
     public PseudoUser createOneUser(UserCreateRequest request) {
 
+        triggerMail(request);
+
         User user =checkUserNameAndEmailValidation(request);
         userRepository.save(user);
         return new PseudoUser(user);
@@ -52,7 +57,7 @@ public class UserManager implements UserService {
     @Override
     public PseudoUser createOneAdminUser(UserCreateRequest request,long userId) {
         if(userRepository.findById(userId).isPresent()&&userRepository.findById(userId).get().getUserRank()==Rank.ADMIN){
-           User user =checkUserNameAndEmailValidation(request);
+            User user =checkUserNameAndEmailValidation(request);
             user.setUserRank(Rank.ADMIN);
 
             userRepository.save(user);
@@ -62,17 +67,17 @@ public class UserManager implements UserService {
     }
 
     @Override
-public long userLogin(UserLoginRequest request) {
-    Optional<User> optionalUser = userRepository.findByUsername(request.getUsername());
-    if (optionalUser.isPresent()) {
-        User user = optionalUser.get();
-        if (request.getPassword().equals(user.getPassword())) {
-            return user.getUserId();
+    public long userLogin(UserLoginRequest request) {
+        Optional<User> optionalUser = userRepository.findByUsername(request.getUsername());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (request.getPassword().equals(user.getPassword())) {
+                return user.getUserId();
+            }
         }
-    }
-    throw new PasswordException("Username or password is not true...");
+        throw new PasswordException("Username or password is not true...");
 
-}
+    }
     @Override
     public PseudoUser getOnePseudoUserByUserId(long userId, PseudoUser pNewUser) {
         Optional<User> user =userRepository.findById(userId);
@@ -91,24 +96,24 @@ public long userLogin(UserLoginRequest request) {
         Optional<User> user= userRepository.findByUsername(username);
 
         if(user.isPresent()){
-        boolean follow = followRepository.existsFollowByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId());
-        if(followRepository.findFollowsByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId()).isPresent()){
-            if(followRepository.findFollowsByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId()).get().getFollowStatus()== Status.INACTIVE){
-                follow=!follow;
+            boolean follow = followRepository.existsFollowByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId());
+            if(followRepository.findFollowsByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId()).isPresent()){
+                if(followRepository.findFollowsByFollower_UserIdAndFollowing_UserId(followerId,user.get().getUserId()).get().getFollowStatus()== Status.INACTIVE){
+                    follow=!follow;
+                }
             }
-        }
 
-        PseudoUser pseudo = new PseudoUser(user,follow);
-        pseudo.setNumberOfFollowers(followRepository.findFollowsByFollowing_UserIdAndFollowStatus(pseudo.getUserId(),Status.ACTIVE).size());
-        pseudo.setNumberOfFollowings(followRepository.findFollowsByFollower_UserIdAndFollowStatus(pseudo.getUserId(),Status.ACTIVE).size());
-        pseudo.setNumberOfMeows(meowRepository.findMeowsByOwner_UserId(pseudo.getUserId()).size());
+            PseudoUser pseudo = new PseudoUser(user,follow);
+            pseudo.setNumberOfFollowers(followRepository.findFollowsByFollowing_UserIdAndFollowStatus(pseudo.getUserId(),Status.ACTIVE).size());
+            pseudo.setNumberOfFollowings(followRepository.findFollowsByFollower_UserIdAndFollowStatus(pseudo.getUserId(),Status.ACTIVE).size());
+            pseudo.setNumberOfMeows(meowRepository.findMeowsByOwner_UserId(pseudo.getUserId()).size());
 
-        return pseudo;
-    } else{
+            return pseudo;
+        } else{
             throw new UserException();
 
         }
-   }
+    }
 
     @Override
     public PseudoUser getOnePseudoUserByUsername(String username) {
@@ -122,7 +127,7 @@ public long userLogin(UserLoginRequest request) {
         List<PseudoUser> newReturnList= new ArrayList<>();
         for (Follow allFollow : allFollows) {
             PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollow.getFollower().getUserId()));
-           newReturnList=setFollowersAndFollowings(newList, newPseudo);
+            newReturnList=setFollowersAndFollowings(newList, newPseudo);
         }
         return newReturnList;
     }
@@ -137,19 +142,19 @@ public long userLogin(UserLoginRequest request) {
         List<PseudoUser> newReturnList= new ArrayList<>();
         for (Follow allFollow : allFollows) {
             PseudoUser newPseudo = new PseudoUser(userRepository.findById(allFollow.getFollowing().getUserId()));
-           newReturnList= setFollowersAndFollowings(newList, newPseudo);
+            newReturnList= setFollowersAndFollowings(newList, newPseudo);
         }
         return newReturnList;
     }
 
     @Override
     public void updateOneUserName(long userId, UserUpdateRequest request) {
-       Optional<User> user = userRepository.findById(userId);
-       if(user.isPresent()){
-           User updateUser = user.get();
-           updateUser.setName(request.getName());
-           userRepository.save(updateUser);
-       }
+        Optional<User> user = userRepository.findById(userId);
+        if(user.isPresent()){
+            User updateUser = user.get();
+            updateUser.setName(request.getName());
+            userRepository.save(updateUser);
+        }
 
     }
 
@@ -215,6 +220,18 @@ public long userLogin(UserLoginRequest request) {
         newPseudo.setNumberOfMeows(meows.size());
         newList.add(newPseudo);
         return newList;
+    }
+
+    public void triggerMail(UserCreateRequest request)  {
+        senderService.sendSimpleEmail(request.getEmail(),
+                "Account creation",
+                "Dear "+request.getUsername()+"\n" +
+                        "\n" +
+                        "Your meows.social account has been created. \n" +
+                        "We are glad to have you among us.\n" +
+                        "\n" +
+                        "Best Regards\n" +
+                        "Meows Dev Team ");
     }
 }
 

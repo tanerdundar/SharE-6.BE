@@ -5,6 +5,7 @@ import com.tanerdundar.sharer.entities.User;
 import com.tanerdundar.sharer.requests.user.UserCreateRequest;
 import com.tanerdundar.sharer.requests.user.UserLoginRequest;
 import com.tanerdundar.sharer.requests.user.UserUpdateRequest;
+import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface UserService {
 
     User getOneUserByUserId(long userId);
     List<User> getAllUsers();
-    PseudoUser createOneUser(UserCreateRequest request);
+    PseudoUser createOneUser(UserCreateRequest request) throws MessagingException;
     PseudoUser createOneAdminUser(UserCreateRequest request,long userId);
 
     long userLogin(UserLoginRequest request);

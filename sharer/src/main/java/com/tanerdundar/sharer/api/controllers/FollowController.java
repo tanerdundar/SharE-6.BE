@@ -40,6 +40,8 @@ public class FollowController {
         return ResponseEntity.ok(follows);
     }
 
+
+
 //    @PutMapping("/follow/unfollow")
 //    public Follow updateOneFollowStatus(@PathVariable Long followId, @RequestBody FollowUpdateRequest updateFollow) {
 //        return followService.updateOneFollowStatusByRequest(followId, updateFollow);

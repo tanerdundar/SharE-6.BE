@@ -5,6 +5,8 @@ import com.tanerdundar.sharer.dto.PseudoUser;
 import com.tanerdundar.sharer.entities.Meow;
 import com.tanerdundar.sharer.entities.User;
 import com.tanerdundar.sharer.requests.meow.MeowCreateRequest;
+import com.tanerdundar.sharer.requests.meow.MeowUpdateRequest;
+import com.tanerdundar.sharer.requests.user.UserCreateRequest;
 import com.tanerdundar.sharer.service.abstracts.MeowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +46,12 @@ public class MeowController {
         List<PseudoMeow> allMeows=meowService.getAllMeowsPseudoByUserId(userId,ownerId);
         return ResponseEntity.ok(allMeows);
     }
+    @PutMapping("/{ownerId}/{meowId}")
+    public void updateOneMeowByMeowId(@PathVariable long ownerId,@PathVariable long meowId,@RequestBody MeowUpdateRequest request) {
+        meowService.updateOneMeowByMeowId(ownerId,meowId,request);
+
+    }
+
 
 
 }

@@ -9,6 +9,7 @@ import com.tanerdundar.sharer.dto.PseudoUser;
 import com.tanerdundar.sharer.entities.*;
 import com.tanerdundar.sharer.exceptionHandlers.exceptions.MeowException;
 import com.tanerdundar.sharer.requests.meow.MeowCreateRequest;
+import com.tanerdundar.sharer.requests.meow.MeowUpdateRequest;
 import com.tanerdundar.sharer.service.abstracts.MeowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -129,5 +130,15 @@ public class MeowManager implements MeowService {
         Comparator<PseudoMeow> reverseIdComparator = Collections.reverseOrder(idComparator);
         Collections.sort(newList, reverseIdComparator);
         return newList;
+    }
+
+    @Override
+    public void updateOneMeowByMeowId(long ownerId, long meowId, MeowUpdateRequest request) {
+        Meow meowForUpdate= meowRepository.findById(meowId).orElseThrow();
+        if(request.getContent().length()<190){
+            meowForUpdate.setContent(request.getContent());
+            meowRepository.save(meowForUpdate);
+        }
+
     }
 }

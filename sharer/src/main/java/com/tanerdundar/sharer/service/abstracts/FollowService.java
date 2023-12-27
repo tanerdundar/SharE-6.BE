@@ -1,8 +1,6 @@
 package com.tanerdundar.sharer.service.abstracts;
 
-
 import com.tanerdundar.sharer.entities.Follow;
-import com.tanerdundar.sharer.requests.follow.FollowCheckRequest;
 import com.tanerdundar.sharer.requests.follow.FollowCreateRequest;
 import org.springframework.stereotype.Service;
 

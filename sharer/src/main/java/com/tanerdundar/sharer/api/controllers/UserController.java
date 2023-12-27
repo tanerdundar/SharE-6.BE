@@ -7,6 +7,7 @@ import com.tanerdundar.sharer.requests.user.UserCreateRequest;
 import com.tanerdundar.sharer.requests.user.UserLoginRequest;
 import com.tanerdundar.sharer.requests.user.UserUpdateRequest;
 import com.tanerdundar.sharer.service.abstracts.UserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
     @PostMapping
-    public ResponseEntity createOneUser( @RequestBody UserCreateRequest request) {
+    public ResponseEntity createOneUser( @RequestBody UserCreateRequest request) throws MessagingException {
         PseudoUser user= userService.createOneUser(request);
         return ResponseEntity.ok(user);
     }
