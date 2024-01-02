@@ -36,6 +36,7 @@ public class UserController {
     @PostMapping("/{userId}")
     public void createOneAdminUser( @RequestBody UserCreateRequest request,@PathVariable long userId) {
         PseudoUser user= userService.createOneAdminUser(request,userId);
+        // comment
     }
     @PostMapping("/login")
     public long userLogin(@RequestBody UserLoginRequest request) {
